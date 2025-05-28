@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 from odoo import http
-from odoo.http import request, Response
+from odoo.http import request
 import logging
 
+
 _logger = logging.getLogger(__name__)
+
 
 class GithubWebhookController(http.Controller):
     @http.route('/github/webhook', type='json', auth='public', methods=['POST'], csrf=False)
