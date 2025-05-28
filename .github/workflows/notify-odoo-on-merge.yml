@@ -1,0 +1,20 @@
+name: Notify Odoo on PR Merge
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  notify-odoo:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send notification to Odoo
+        env:
+          ODOO_WEBHOOK_URL: ${{ secrets.ODOO_WEBHOOK_URL }}
+        run: |
+          BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
+          TASK_ID=$(echo "$BRANCH_NAME" | grep -oE '[0-9]+')
+          curl -X POST -H "Content-Type: application/json" \
+            -d '{"branch": "'$BRANCH_NAME'", "task_id": "'$TASK_ID'"}' \
+            "$ODOO_WEBHOOK_URL"
