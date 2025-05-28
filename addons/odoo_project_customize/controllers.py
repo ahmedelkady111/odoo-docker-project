@@ -29,6 +29,7 @@ class GithubWebhookController(http.Controller):
             if task:
                 task.write({'stage_id': self._get_approved_stage_id(task)})
                 return {'status': 'success', 'message': 'Task approved'}
+            _logger.warning('Task not found for id: %s', task_id)
         return {'status': 'error', 'message': 'Invalid payload'}
 
     def _get_approved_stage_id(self, task):
