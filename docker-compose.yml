@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   web:
-    image: odoo:18
+    build: .
     depends_on:
       - db
     ports:
@@ -10,10 +10,12 @@ services:
     volumes:
       - addons:/mnt/extra-addons
       - data:/var/lib/odoo
+      - ./config/odoo.conf:/etc/odoo/odoo.conf
     environment:
       - HOST=db
       - USER=odoo
       - PASSWORD=odoo
+    command: ["odoo", "-c", "/etc/odoo/odoo.conf"]
 
   db:
     image: postgres:14
@@ -22,6 +24,8 @@ services:
       - POSTGRES_DB=odoo
       - POSTGRES_USER=odoo
       - POSTGRES_PASSWORD=odoo
+    ports:
+      - "5432:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
 

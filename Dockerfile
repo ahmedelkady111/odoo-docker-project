@@ -1,17 +1,12 @@
 FROM odoo:18
 
-# Install any additional dependencies here
-# For example, to install Python packages, you can use:
-# RUN pip install <package_name>
+USER root
 
-# Copy custom addons if any
-COPY ./addons /mnt/extra-addons
+RUN apt-get update && apt-get install -y \
+    fonts-dejavu \
+    gsfonts \
+    t1-xfree86-nonfree \
+    libfreetype6-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-# Set the working directory
-WORKDIR /var/lib/odoo
-
-# Expose the Odoo port
-EXPOSE 8069
-
-# Command to run Odoo
-CMD ["odoo", "--config", "/etc/odoo/odoo.conf"]
+USER odoo

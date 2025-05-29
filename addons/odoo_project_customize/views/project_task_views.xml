@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_task_form_github_pr_url" model="ir.ui.view">
+        <field name="name">project.task.form.github.pr.url</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_form2"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='group_project']" position="inside">
+                <field name="github_pr_url"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
