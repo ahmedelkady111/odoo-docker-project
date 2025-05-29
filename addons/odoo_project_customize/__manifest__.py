@@ -6,7 +6,9 @@
     "author": "ahmedelkady111",
     "category": "Custom",
     "depends": ["base", "project"],
-    "data": [],
+    "data": [
+        "views/project_task_views.xml",
+    ],
     "installable": True,
     "application": True,
     "auto_install": False
