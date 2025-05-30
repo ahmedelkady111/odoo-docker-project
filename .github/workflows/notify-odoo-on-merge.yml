@@ -15,6 +15,11 @@ jobs:
         run: |
           BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
           TASK_ID=$(echo "$BRANCH_NAME" | grep -oE '[0-9]+')
+          USER_EMAIL="${{ github.event.pull_request.user.email }}"
+          # Fallback if email is not available, use login as a placeholder
+          if [ -z "$USER_EMAIL" ]; then
+            USER_EMAIL="${{ github.event.pull_request.user.login }}@users.noreply.github.com"
+          fi
           curl -X POST -H "Content-Type: application/json" \
-            -d '{"branch": "'$BRANCH_NAME'", "task_id": "'$TASK_ID'"}' \
+            -d "{\"branch\": \"$BRANCH_NAME\", \"task_id\": \"$TASK_ID\", \"user_email\": \"$USER_EMAIL\"}" \
             "$ODOO_WEBHOOK_URL"

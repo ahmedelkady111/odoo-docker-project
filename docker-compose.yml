@@ -6,30 +6,40 @@ services:
     depends_on:
       - db
     ports:
-      - "8069:8069"
+      - "${ODOO_PORT:-8069}:8069"
     volumes:
-      - addons:/mnt/extra-addons
-      - data:/var/lib/odoo
+      - ./addons:/mnt/extra-addons
+      - odoo_data:/var/lib/odoo
       - ./config/odoo.conf:/etc/odoo/odoo.conf
     environment:
-      - HOST=db
-      - USER=odoo
-      - PASSWORD=odoo
-    command: ["odoo", "-c", "/etc/odoo/odoo.conf"]
+      - HOST=${POSTGRES_HOST:-db}
+      - PORT=${POSTGRES_PORT:-5432}
+      - USER=${POSTGRES_USER:-odoo}
+      - PASSWORD=${POSTGRES_PASSWORD?Variable POSTGRES_PASSWORD is required}
+      - GITHUB_WEBHOOK_SECRET=${GITHUB_WEBHOOK_SECRET?Variable GITHUB_WEBHOOK_SECRET is required}
+      # - ODOO_ADMIN_PASSWORD=${ODOO_ADMIN_PASSWORD}
+    command: ["odoo", "-c", "/etc/odoo/odoo.conf", "-u=odoo_project_customize"]
+    env_file:
+      - .env
 
   db:
-    image: postgres:14
+    image: postgres:14 # Consider pinning to a specific minor version, e.g., postgres:14.5
     restart: always
     environment:
-      - POSTGRES_DB=odoo
-      - POSTGRES_USER=odoo
-      - POSTGRES_PASSWORD=odoo
-    ports:
-      - "5432:5432"
+      - POSTGRES_DB=${POSTGRES_DB:-odoo}
+      - POSTGRES_USER=${POSTGRES_USER:-odoo}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD?Variable POSTGRES_PASSWORD is required}
+    # Remove port exposure unless explicitly needed for external access
+    # ports:
+    #   - "${POSTGRES_HOST_PORT:-5432}:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
+    env_file:
+      - .env # Load environment variables from .env file
 
 volumes:
-  addons:
-  data:
+  addons: # This named volume is currently incorrect for local addons
+  odoo_data: # Renamed from 'data' for clarity
   db_data:
+  odoo_logs: # Added volume for logs
+
